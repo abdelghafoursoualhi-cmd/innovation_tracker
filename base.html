@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Innovation Idea Tracker{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background: #f4f6f9; min-height: 100vh; }
+    .navbar { box-shadow: 0 3px 15px rgba(0,0,0,0.1); }
+    .card { border-radius: 15px; transition: transform 0.2s, box-shadow 0.2s; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+    .btn { border-radius: 50px; transition: all 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .card img { max-height: 300px; object-fit: cover; border-radius: 12px; }
+    .form-control { border-radius: 12px; }
+    .alert { border-radius: 12px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">💡 Innovation Idea Tracker</a>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <a href="{{ url_for('set_lang', lang='ar') }}" class="btn btn-sm btn-outline-light">AR</a>
+      <a href="{{ url_for('set_lang', lang='en') }}" class="btn btn-sm btn-outline-light">EN</a>
+
+      {% if session.get('user_id') %}
+        <span class="text-white me-3">{{ _('مرحبا','Hello') }} {{ session.username }}</span>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm">{{ _('خروج','Logout') }}</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-sm me-2">{{ _('دخول','Login') }}</a>
+        <a href="{{ url_for('register') }}" class="btn btn-warning btn-sm">{{ _('تسجيل','Register') }}</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+

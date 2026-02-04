@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Innovation Idea Tracker | {{ _('تسجيل جديد','Register') }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="card shadow p-4" style="width:100%; max-width:400px; border-radius:15px;">
+    <h4 class="text-center mb-4 fw-bold">📝 {{ _('إنشاء حساب','Create Account') }}</h4>
+    <form method="post">
+      <input type="text" name="username" class="form-control mb-3" placeholder="{{ _('اسم المستخدم','Username') }}" required>
+      <input type="password" name="password" class="form-control mb-3" placeholder="{{ _('كلمة المرور','Password') }}" required>
+      <button class="btn btn-primary w-100 fw-bold">{{ _('تسجيل','Register') }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+

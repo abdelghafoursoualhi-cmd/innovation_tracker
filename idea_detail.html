@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Innovation Idea Tracker | {{ idea.title }}{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">⬅ {{ _('رجوع','Back') }}</a>
+
+<div class="card shadow p-4 mb-4">
+  <h3 class="fw-bold">{{ idea.title }}</h3>
+  <p>{{ idea.description }}</p>
+  {% if idea.image %}
+    <img src="{{ url_for('static', filename='images/' + idea.image) }}" class="img-fluid rounded mb-3">
+  {% endif %}
+  {% if idea.category %}
+    <span class="badge bg-info">{{ idea.category }}</span>
+  {% endif %}
+</div>
+
+<h5 class="fw-bold mb-3">💬 {{ _('التعليقات','Comments') }}</h5>
+<div class="mb-4">
+  {% for comment in idea.comments %}
+    <div class="card p-2 mb-2 shadow-sm">{{ comment.content }}</div>
+  {% endfor %}
+</div>
+
+{% if session.get('user_id') %}
+<form method="post" class="card p-3 shadow-sm mb-4">
+  <textarea name="content" class="form-control mb-2" placeholder="{{ _('أضف تعليق...','Add a comment...') }}"></textarea>
+  <button class="btn btn-primary w-100 fw-bold">{{ _('إرسال','Send') }}</button>
+</form>
+{% else %}
+<p class="text-muted">{{ _('سجّل الدخول لإضافة تعليق','Login to comment') }}</p>
+{% endif %}
+{% endblock %}
+
+
+

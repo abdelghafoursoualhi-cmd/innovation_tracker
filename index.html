@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Innovation Idea Tracker | {{ _('الأفكار','Ideas') }}{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 fw-bold">💡 {{ _('الأفكار','Ideas') }}</h2>
+
+{% if session.get('user_id') %}
+<div class="card p-4 mb-5 shadow-sm bg-white">
+  <h5 class="fw-bold mb-3">💡 {{ _('إضافة فكرة جديدة','Add New Idea') }}</h5>
+  <form method="post" enctype="multipart/form-data" id="ideaForm">
+    <input name="title" class="form-control mb-3" placeholder="{{ _('العنوان','Title') }}" required>
+    <textarea name="description" class="form-control mb-2" placeholder="{{ _('الوصف','Description') }}" maxlength="300" id="descInput"></textarea>
+    <div class="text-end mb-3"><small id="charCount">0 / 300</small></div>
+
+    <select name="category" class="form-control mb-3" required>
+      <option value="">{{ _('اختر التصنيف','Select Category') }}</option>
+      <option value="تكنولوجيا">🖥 {{ _('تكنولوجيا','Technology') }}</option>
+      <option value="تعليم">📚 {{ _('تعليم','Education') }}</option>
+      <option value="بيئة">🌱 {{ _('بيئة','Environment') }}</option>
+      <option value="صحة">🩺 {{ _('صحة','Health') }}</option>
+      <option value="إبداع">🎨 {{ _('إبداع','Creativity') }}</option>
+    </select>
+
+    <label class="form-label">{{ _('رفع صورة','Upload Image') }}</label>
+    <input type="file" name="image" class="form-control mb-3" id="imageInput">
+    <div class="mb-3">
+      <img id="preview" src="#" alt="preview" class="img-fluid rounded d-none" style="max-height:200px;">
+    </div>
+
+    <button class="btn btn-primary w-100 fw-bold">{{ _('إضافة فكرة','Add Idea') }}</button>
+  </form>
+</div>
+
+<script>
+const imageInput = document.getElementById('imageInput');
+const preview = document.getElementById('preview');
+imageInput.addEventListener('change', function(){
+  const file = this.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      preview.src = e.target.result;
+      preview.classList.remove('d-none');
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+const descInput = document.getElementById('descInput');
+const charCount = document.getElementById('charCount');
+descInput.addEventListener('input', function(){
+  charCount.textContent = `${this.value.length} / 300`;
+});
+</script>
+{% endif %}
+
+<div class="row g-4">
+{% for idea in ideas %}
+<div class="col-md-6">
+  <div class="card shadow-sm">
+    {% if idea.image %}
+    <img src="{{ url_for('static', filename='images/' + idea.image) }}" class="card-img-top">
+    {% endif %}
+    <div class="card-body">
+      <h5 class="card-title fw-bold">{{ idea.title }}</h5>
+      <p class="card-text">{{ idea.description }}</p>
+      {% if idea.category %}
+      <span class="badge bg-info">{{ idea.category }}</span>
+      {% endif %}
+      <div class="mt-3 d-flex flex-wrap gap-2">
+        <form action="{{ url_for('vote', idea_id=idea.id) }}" method="post" style="display:inline;">
+          <button class="btn btn-success btn-sm">👍 {{ idea.votes }}</button>
+        </form>
+        <form action="{{ url_for('downvote', idea_id=idea.id) }}" method="post" style="display:inline;">
+          <button class="btn btn-danger btn-sm">👎 {{ idea.downvotes }}</button>
+        </form>
+        <a href="{{ url_for('idea_detail', idea_id=idea.id) }}" class="btn btn-outline-primary btn-sm">💬 {{ _('التفاصيل','Details') }}</a>
+        {% if session.get('user_id') == idea.submitter_id or session.get('role') == 'admin' %}
+        <form action="{{ url_for('delete_idea', idea_id=idea.id) }}" method="post" 
+              onsubmit="return confirm('{{ _('هل أنت متأكد من الحذف؟','Are you sure?') }}');" style="display:inline;">
+          <button class="btn btn-outline-danger btn-sm">🗑</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

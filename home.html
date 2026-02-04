@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>الصفحة الرئيسية</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>مرحبا بك في منصة الابتكار</h1>
+
+    {% if 'user_id' in session %}
+        <p>مرحباً! <a href="{{ url_for('logout') }}">تسجيل الخروج</a></p>
+        <p><a href="{{ url_for('add_idea') }}">إضافة فكرة جديدة</a></p>
+    {% else %}
+        <p><a href="{{ url_for('login') }}">تسجيل الدخول</a> | <a href="{{ url_for('register') }}">تسجيل حساب</a></p>
+    {% endif %}
+
+    <form method="GET" action="{{ url_for('home') }}">
+        <input type="text" name="q" placeholder="ابحث عن فكرة">
+        <button type="submit">بحث</button>
+    </form>
+
+    <h2>جميع الأفكار</h2>
+    <ul>
+        {% for idea in ideas %}
+            <li>
+                <a href="{{ url_for('idea_detail', idea_id=idea.id) }}">{{ idea.title }}</a> - {{ idea.category }}
+            </li>
+        {% else %}
+            <li>لا توجد أفكار بعد.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+<ul>
+    {% for idea in ideas %}
+        <li>
+            <strong>{{ idea.title }}</strong> - {{ idea.category }} - {{ idea.submission_date.strftime('%Y-%m-%d') }}
+            <br>
+            👍 {{ idea.votes|selectattr("vote_type","equalto","upvote")|list|length }}
+            👎 {{ idea.votes|selectattr("vote_type","equalto","downvote")|list|length }}
+            <br>
+            {% if 'user_id' in session and session['user_id'] == idea.submitter_id %}
+                <a href="{{ url_for('edit_idea', idea_id=idea.id) }}">تعديل</a> |
+                <a href="{{ url_for('delete_idea', idea_id=idea.id) }}">حذف</a>
+            {% endif %}
+            <a href="{{ url_for('idea_detail', idea_id=idea.id) }}">التفاصيل</a>
+        </li>
+    {% else %}
+        <li>لا توجد أفكار بعد.</li>
+    {% endfor %}
+</ul>
